@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGIS Kependudukan Kota Semarang</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.1/dist/leaflet.css" integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin=""/>
+    <link rel="stylesheet" type="text/css" href="src/L.Control.ZoomBar.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.1/dist/leaflet.js" integrity="sha256-NDI0K41gVbWqfkkaHj15IzU7PtMoelkzyKp8TOaFQ3s=" crossorigin=""></script>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+            text-decoration: none;
+            list-style: none;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+            text-transform: capitalize;
+        }
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        header{
+            position: relative;
+            height: 60px;
+            top: 0; left: 0; right: 0;
+            background: #32CD32;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1000;
+        }
+        header .logo{
+            font-weight: bolder;
+            font-size: 25px;
+            color: #000;
+            padding-left: 2%;
+        }
+
+        .menu .navbar{
+            height: 25px;
+            line-height: 25px;
+            text-align: right;
+            background-color: #00FF00;
+        }
+        .menu .navbar ul li{
+            display: inline-block;
+            position: relative;
+            padding-right: 25px;
+        }
+        .menu .navbar ul li img{
+            height: 17px;
+            width: 17px;
+            margin-right: 5px;
+        }
+        .menu .navbar ul li a{
+            color: #FFFFFF;
+            font-weight: bold;
+        }
+
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            height: 572px;
+        }
+        .sidebar {
+            width: 20%;
+            background-color: #F5FFFA;
+        }
+        .sidemenu{
+            padding: 5px;
+            margin-left: 3%;
+        }
+        #menu-bar1, #menu-bar2, #menu-bar3{
+            display: none;
+        }
+        label{
+            font-size: 19px;
+            padding: 0px;
+            color: #000000;
+        }
+        .navside1{
+            display: none;
+        }
+        .navside1 ul, .navside2 ul{
+            margin-bottom: 10px;
+        }
+        #menu-bar1:checked ~ .navside1{
+            display: initial;
+        }
+        .navside1 ul li{
+            list-style: none;
+        }
+        .navside1 ul li a{
+            text-decoration: none;
+            font-size: 17px;
+            color: #bbbbbb;
+        }
+        .navside1 label{
+            font-size: 17px;
+            color: #bbbbbb;
+        }
+        .navside2{
+            display: none;
+        }
+        #menu-bar2:checked ~ .navside2{
+            display: initial;
+        }
+        .navside2 ul li{
+            list-style: none;
+            font-size: 17px;
+            color: #bbbbbb;
+        }
+
+        .map{
+            width: 80%;
+            background-color: aquamarine;
+        }
+        @media(max-width:850px){
+            header{
+                padding: 20px;
+            }
+        }
+        @media(max-width:420px){
+            header .logo{
+                font-size: 17px;
+            }
+            header img{
+                width: 35px;
+                height: 35px;
+            }
+        }
+    </style>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header>
+        <a href="#" class="logo">WebGIS Kependudukan</a>
+    </header>
+    <div class="menu">
+        <nav class="navbar">
+            <ul>
+                <li><a href="#"><img src="icon/home1.svg"> Homepage</a></li>
+                <li><a href="#"><img src="icon/about1.svg"> About</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="content">
+        <div class="sidebar">
+            <div class="sidemenu">
+                <input type="checkbox" id="menu-bar1">
+                <label for="menu-bar1">Layer</label>
+                <nav class="navside1">
+                    <ul>
+                        <li><label><input type="checkbox" id="data1" checked>&nbsp;Jumlah Penduduk</label></li>
+                        <li><label><input type="checkbox" id="data2" checked>&nbsp;Kepadatan Penduduk</label></li>
+                        <!-- <li><label><input type="checkbox" id="data3" checked>&nbsp;Pertumbuhan Penduduk</label></li>
+                        <li><label><input type="checkbox" id="data4" checked>&nbsp;Rasio Ketergantungan</label></li> -->
+                        <li><label><input type="checkbox" id="data5" checked>&nbsp;Rasio Jenis Kelamin</label></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="sidemenu">
+                <input type="checkbox" id="menu-bar2">
+                <label for="menu-bar2">Legenda</label>
+                <nav class="navside2">
+                    <ul>
+                        <li>Kecil</li>
+                        <li>Sedang</li>
+                        <li>Besar</li>
+                        <li>Sangat Besar</li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="sidemenu">
+                <input type="checkbox" id="menu-bar3">
+                <label for="menu-bar3">Print</label>
+            </div>
+        </div>
+        <div class="map" id="map"></div>
+    </div>
+</body>
+<script type="text/javascript" src="src/L.Control.ZoomBar.js"></script>
+<script src="src/leaflet.ajax.js"></script>
+<script>
+    //pengaturan basemap dan layer
+    var cities = L.layerGroup();
+
+    var mLittleton = new L.GeoJSON.AJAX(["geojson/Kota-Semarang.geojson"],{style: {"fillColor":"#7FFFD4", "fillOpacity":"0.3", "color":"#008B8B", "weight": 0.3, "opacity":0.8}}).addTo(cities);
+    
+    var mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+    var mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+
+    var streets = L.tileLayer(mbUrl, {id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
+
+    var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    });
+
+    var map = L.map('map', {
+        center: [-7.001213, 110.424615],
+        zoom: 12,
+        layers: [osm, cities],
+        zoomControl: false
+    });
+
+    var baseLayers = {
+        'OpenStreetMap': osm,
+        'Streets': streets
+    };
+
+    var layerControl = L.control.layers(baseLayers).addTo(map);
+
+    var satellite = L.tileLayer(mbUrl, {id: 'mapbox/satellite-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
+    layerControl.addBaseLayer(satellite, 'Satellite');
+
+    //Zoom Control
+    var zoom_bar = new L.Control.ZoomBar({position: 'topleft'}).addTo(map);
+
+    //sidemenu > kontrol untuk side menu
+    document.getElementById("data1").addEventListener("change", function(){
+        if (document.getElementById(this.id).checked == true){
+            jsonTest.addTo(map);
+        } else {
+            jsonTest.remove(map);
+        }
+    });
+
+    document.getElementById("data2").addEventListener("change", function(){
+        if (document.getElementById(this.id).checked == true){
+            jsonTest1.addTo(map);
+        } else {
+            jsonTest1.remove(map);
+        }
+    });
+
+    document.getElementById("data5").addEventListener("change", function(){
+        if (document.getElementById(this.id).checked == true){
+            jsonTest2.addTo(map);
+        } else {
+            jsonTest2.remove(map);
+        }
+    });
+
+    //popup untuk layer yang ditampilkan
+    function popUp(f,l){
+        var out = [];
+        if (f.properties){
+            for(key in f.properties){
+                out.push(key+": "+f.properties[key]);
+            }
+            l.bindPopup(out.join("<br />"));
+        }
+    }
+
+    //data geospasial
+    var jsonTest = new L.GeoJSON.AJAX(["geojson/Jumlah-Pend-Semarang.geojson"],{onEachFeature:popUp}).addTo(map);
+    var jsonTest1 = new L.GeoJSON.AJAX(["geojson/Kepadatan-Pend-Semarang.geojson"],{onEachFeature:popUp}).addTo(map);
+    var jsonTest2 = new L.GeoJSON.AJAX(["geojson/Rasio-JK-Semarang.geojson"],{onEachFeature:popUp}).addTo(map);
+</script>
+</html>
