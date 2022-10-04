@@ -266,6 +266,13 @@
             d < 10   ? '#FED976' :
                         '#FFEDA0';
     }
+    
+    function getColor2(d) {
+        return d > 100 ? '#FF0000' :
+            d == 100  ? '#FFA500' :
+            d < 100  ? '#32CD32' :
+                        '#FFEDA0';
+    }
 
     //data geospasial
     var jsonTest = new L.GeoJSON.AJAX(["geojson/Jumlah-Pend-Semarang.geojson"],{onEachFeature:popUp, style : function (feature){
@@ -290,7 +297,7 @@
     }}).addTo(map);
     var jsonTest2 = new L.GeoJSON.AJAX(["geojson/Rasio-JK-Semarang.geojson"],{onEachFeature:popUp, style : function (feature){
         return {
-            fillColor: getColor(feature.properties.RasioJenisKelamin),
+            fillColor: getColor2(feature.properties.RasioJenisKelamin),
             weight: 2,
             opacity: 1,
             color: 'white',
