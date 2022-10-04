@@ -112,6 +112,27 @@
             font-size: 17px;
             color: #bbbbbb;
         }
+        .navside3{
+            display: none;
+        }
+        #menu-bar3:checked ~ .navside3{
+            display: initial;
+        }
+        .navside3 ul li{
+            padding: 5px;
+        }
+        .navside3 button{
+            padding: 5px;
+            background-color: #bbbbbb;
+            border: 1px solid #000;
+            border-radius: 5px;
+            font-size: 15px;
+            color: #FFFFFF;
+        }
+        .navside3 button:hover{
+            background-color: #F5FFFA;
+            color: #bbbbbb;
+        }
 
         .map{
             width: 80%;
@@ -134,7 +155,7 @@
     </style>
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
-<body>
+<body id="body">
     <header>
         <a href="#" class="logo">WebGIS Kependudukan</a>
     </header>
@@ -175,7 +196,12 @@
             </div>
             <div class="sidemenu">
                 <input type="checkbox" id="menu-bar3">
-                <label for="menu-bar3">Print</label>
+                <label for="menu-bar3">Print Map</label>
+                <nav class="navside3">
+                    <ul>
+                        <li><button onclick="printPage()">Print Map</button></li>
+                    </ul>
+                </nav>
             </div>
         </div>
         <div class="map" id="map"></div>
@@ -183,6 +209,8 @@
 </body>
 <script type="text/javascript" src="src/L.Control.ZoomBar.js"></script>
 <script src="src/leaflet.ajax.js"></script>
+<script src="src/bundle.js"></script>
+<script src="src/bundle.js.map"></script>
 <script>
     //pengaturan basemap dan layer
     var cities = L.layerGroup();
@@ -305,5 +333,14 @@
             fillOpacity: 0.7
         };
     }}).addTo(map);
+
+    // download atau print map
+    function printPage() {
+        var body = document.getElementById('body').innerHTML;
+        var map = document.getElementById('map').innerHTML;
+        document.getElementById('body').innerHTML = map;
+        window.print();
+        document.getElementById('body').innerHTML = body;
+    }
 </script>
 </html>
