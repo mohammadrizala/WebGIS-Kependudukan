@@ -255,9 +255,39 @@
         }
     }
 
+    //style pewarnaan data kependudukan
+    function getColor(d) {
+        return d > 1000 ? '#800026' :
+            d > 500  ? '#BD0026' :
+            d > 200  ? '#E31A1C' :
+            d > 100  ? '#FC4E2A' :
+            d > 50   ? '#FD8D3C' :
+            d > 20   ? '#FEB24C' :
+            d > 10   ? '#FED976' :
+                        '#FFEDA0';
+    }
+
     //data geospasial
-    var jsonTest = new L.GeoJSON.AJAX(["geojson/Jumlah-Pend-Semarang.geojson"],{onEachFeature:popUp}).addTo(map);
-    var jsonTest1 = new L.GeoJSON.AJAX(["geojson/Kepadatan-Pend-Semarang.geojson"],{onEachFeature:popUp}).addTo(map);
+    var jsonTest = new L.GeoJSON.AJAX(["geojson/Jumlah-Pend-Semarang.geojson"],{onEachFeature:popUp, style : function (feature){
+        return {
+            fillColor: getColor(feature.properties.JumlahPenduduk),
+            weight: 2,
+            opacity: 1,
+            color: 'white',
+            dashArray: '3',
+            fillOpacity: 0.7
+        };
+    }}).addTo(map);
+    var jsonTest1 = new L.GeoJSON.AJAX(["geojson/Kepadatan-Pend-Semarang.geojson"],{onEachFeature:popUp, style : function (feature){
+        return {
+            fillColor: getColor(feature.properties.KepadatanPenduduk),
+            weight: 2,
+            opacity: 1,
+            color: 'white',
+            dashArray: '3',
+            fillOpacity: 0.7
+        };
+    }}).addTo(map);
     var jsonTest2 = new L.GeoJSON.AJAX(["geojson/Rasio-JK-Semarang.geojson"],{onEachFeature:popUp}).addTo(map);
 </script>
 </html>
