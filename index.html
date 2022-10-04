@@ -288,6 +288,15 @@
             fillOpacity: 0.7
         };
     }}).addTo(map);
-    var jsonTest2 = new L.GeoJSON.AJAX(["geojson/Rasio-JK-Semarang.geojson"],{onEachFeature:popUp}).addTo(map);
+    var jsonTest2 = new L.GeoJSON.AJAX(["geojson/Rasio-JK-Semarang.geojson"],{onEachFeature:popUp, style : function (feature){
+        return {
+            fillColor: getColor(feature.properties.RasioJenisKelamin),
+            weight: 2,
+            opacity: 1,
+            color: 'white',
+            dashArray: '3',
+            fillOpacity: 0.7
+        };
+    }}).addTo(map);
 </script>
 </html>
